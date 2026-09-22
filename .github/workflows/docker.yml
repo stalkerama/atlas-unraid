@@ -22,6 +22,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out packaging repository
+        uses: actions/checkout@v5
+
       - name: Resolve upstream commit
         id: upstream
         shell: bash
@@ -41,11 +44,22 @@ jobs:
         id: image
         shell: bash
         run: |
-          if docker manifest inspect "${IMAGE_NAME}:upstream-${{ steps.upstream.outputs.short_sha }}" >/dev/null 2>&1; then
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          elif docker manifest inspect "${IMAGE_NAME}:upstream-${{ steps.upstream.outputs.short_sha }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Prepare upstream source
+        if: steps.image.outputs.exists != 'true'
+        shell: bash
+        run: |
+          git clone --filter=blob:none https://github.com/Eraxty/Atlas.git upstream
+          git -C upstream checkout --detach "${{ steps.upstream.outputs.sha }}"
+          cp docker/Dockerfile upstream/Dockerfile.unraid
+          cp docker/entrypoint.sh upstream/unraid-entrypoint.sh
       - name: Set up Docker Buildx
         if: steps.image.outputs.exists != 'true'
         uses: docker/setup-buildx-action@v4
@@ -53,7 +67,8 @@ jobs:
         if: steps.image.outputs.exists != 'true'
         uses: docker/build-push-action@v7
         with:
-          context: https://github.com/Eraxty/Atlas.git#${{ steps.upstream.outputs.sha }}
+          context: ./upstream
+          file: ./upstream/Dockerfile.unraid
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
