@@ -1,4 +1,5 @@
 name: Build Atlas container
+# Builds the upstream source with the Unraid persistence wrapper.
 
 on:
   push:
