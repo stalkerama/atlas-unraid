@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-mkdir -p /app/data
+mkdir -p /app/data /app/data/nzb
 
 python - <<'PY'
 import json
@@ -49,5 +49,8 @@ PY
 # environment-only configuration path.
 unset ATLAS_NNTP_HOST ATLAS_NNTP_PORT ATLAS_NNTP_USER ATLAS_NNTP_PASS
 
-exec python main.py
+# Atlas saves manually generated NZB files in its current directory.
+# Run from persistent appdata so those files survive image updates.
+cd /app/data/nzb
+exec python /app/main.py
 
