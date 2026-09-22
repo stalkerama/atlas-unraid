@@ -1,5 +1,6 @@
 name: Build Atlas container
-# Builds the upstream source with the Unraid persistence wrapper.
+# Builds the upstream source with the Unraid persistence wrapper, including
+# persistent manually generated NZB output.
 
 on:
   push:
