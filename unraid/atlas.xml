@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Atlas</Name>
+  <Repository>ghcr.io/stalkerama/atlas-unraid:latest</Repository>
+  <Registry>https://github.com/stalkerama/atlas-unraid/pkgs/container/atlas-unraid</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/Eraxty/Atlas</Support>
+  <Project>https://github.com/Eraxty/Atlas</Project>
+  <Overview>Atlas is a self-hosted Usenet indexer with a Newznab-compatible API. This package builds the unmodified upstream Dockerfile.</Overview>
+  <Category>Downloaders:</Category>
+  <WebUI>http://[IP]:[PORT:9090]/api?t=caps</WebUI>
+  <Shell>bash</Shell>
+  <ExtraParams>--tty</ExtraParams>
+  <Requires>An NNTP/Usenet provider account. SABnzbd is optional but required for direct downloads.</Requires>
+  <Config Name="Appdata" Target="/app/data" Default="/mnt/user/appdata/atlas" Mode="rw" Description="Atlas configuration, SQLite database, logs, cache, and generated data." Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Newznab API Port" Target="9090" Default="9090" Mode="tcp" Description="Atlas Newznab API port." Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="NNTP Host" Target="ATLAS_NNTP_HOST" Default="" Mode="" Description="Your Usenet provider NNTP hostname." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NNTP Port" Target="ATLAS_NNTP_PORT" Default="563" Mode="" Description="NNTP SSL port." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NNTP Username" Target="ATLAS_NNTP_USER" Default="" Mode="" Description="Your Usenet provider username." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="NNTP Password" Target="ATLAS_NNTP_PASS" Default="" Mode="" Description="Your Usenet provider password." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Index Mode" Target="ATLAS_INDEX_MODE" Default="dynamic" Mode="" Description="Indexing mode: dynamic, live, or backfill." Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="API Bind Address" Target="ATLAS_API_HOST" Default="0.0.0.0" Mode="" Description="Keep 0.0.0.0 so the API is reachable outside the container." Type="Variable" Display="advanced" Required="true" Mask="false"/>
+  <Config Name="API Internal Port" Target="ATLAS_API_PORT" Default="9090" Mode="" Description="Keep aligned with the container port mapping." Type="Variable" Display="advanced" Required="true" Mask="false"/>
+  <Config Name="SABnzbd Host" Target="ATLAS_SAB_HOST" Default="" Mode="" Description="SABnzbd container name or server IP." Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="SABnzbd Port" Target="ATLAS_SAB_PORT" Default="8080" Mode="" Description="SABnzbd web/API port." Type="Variable" Display="always" Required="false" Mask="false"/>
+</Container>
+
