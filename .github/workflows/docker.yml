@@ -1,6 +1,11 @@
 name: Build Atlas container
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/docker.yml
   workflow_dispatch:
   schedule:
     - cron: "17 */6 * * *"
@@ -61,4 +66,3 @@ jobs:
             org.opencontainers.image.revision=${{ steps.upstream.outputs.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
