@@ -30,6 +30,17 @@ Add Atlas to Prowlarr as a Generic Newznab indexer:
 - API key: the api_key value from config.json
 - Category: Other (7000)
 
+## AI search with Ollama
+
+Atlas AI search requires a separate Ollama server and currently hardcodes the
+model qwen3:4b. Pull that model in Ollama, then set OLLAMA_HOST in the Atlas
+template to the reachable Ollama API URL, for example:
+
+http://UNRAID-IP:11434
+
+Do not use localhost when Ollama runs in another container; localhost inside
+Atlas refers to the Atlas container itself.
+
 ## SABnzbd
 
 Set ATLAS_SAB_HOST to the SABnzbd container name when both containers share a
