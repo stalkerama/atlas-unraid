@@ -1,0 +1,64 @@
+name: Build Atlas container
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/atlas-unraid
+  UPSTREAM_REPOSITORY: Eraxty/Atlas
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve upstream commit
+        id: upstream
+        shell: bash
+        run: |
+          sha="$(curl --fail --silent --show-error -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/commits/main" | jq -r '.sha')"
+          test -n "$sha"
+          test "$sha" != "null"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${sha:0:12}" >> "$GITHUB_OUTPUT"
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check whether this upstream commit is already published
+        id: image
+        shell: bash
+        run: |
+          if docker manifest inspect "${IMAGE_NAME}:upstream-${{ steps.upstream.outputs.short_sha }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Set up Docker Buildx
+        if: steps.image.outputs.exists != 'true'
+        uses: docker/setup-buildx-action@v4
+      - name: Build and push
+        if: steps.image.outputs.exists != 'true'
+        uses: docker/build-push-action@v7
+        with:
+          context: https://github.com/Eraxty/Atlas.git#${{ steps.upstream.outputs.sha }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:upstream-${{ steps.upstream.outputs.short_sha }}
+          labels: |
+            org.opencontainers.image.title=Atlas
+            org.opencontainers.image.description=Self-hosted Usenet indexer packaged for Unraid
+            org.opencontainers.image.source=https://github.com/Eraxty/Atlas
+            org.opencontainers.image.revision=${{ steps.upstream.outputs.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
