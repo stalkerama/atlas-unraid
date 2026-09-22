@@ -21,6 +21,7 @@
   <Config Name="NNTP Username" Target="ATLAS_NNTP_USER" Default="" Mode="" Description="Your Usenet provider username." Type="Variable" Display="always" Required="true" Mask="false"></Config>
   <Config Name="NNTP Password" Target="ATLAS_NNTP_PASS" Default="" Mode="" Description="Your Usenet provider password." Type="Variable" Display="always" Required="true" Mask="true"></Config>
   <Config Name="Index Mode" Target="ATLAS_INDEX_MODE" Default="dynamic" Mode="" Description="Indexing mode: dynamic, live, or backfill." Type="Variable" Display="always" Required="true" Mask="false">dynamic</Config>
+  <Config Name="Ollama Host" Target="OLLAMA_HOST" Default="" Mode="" Description="Ollama API URL for AI Search, for example http://192.168.1.10:11434. Ollama must have the qwen3:4b model installed." Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="SABnzbd Host" Target="ATLAS_SAB_HOST" Default="" Mode="" Description="SABnzbd container name or server IP." Type="Variable" Display="always" Required="false" Mask="false"></Config>
   <Config Name="SABnzbd Port" Target="ATLAS_SAB_PORT" Default="8080" Mode="" Description="SABnzbd web/API port." Type="Variable" Display="always" Required="false" Mask="false">8080</Config>
 </Container>
