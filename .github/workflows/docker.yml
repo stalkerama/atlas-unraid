@@ -1,6 +1,5 @@
 name: Build Atlas container
-# Builds the upstream source with the Unraid persistence wrapper, including
-# persistent manually generated NZB output.
+# Builds the upstream source with the Unraid persistence wrapper.
 
 on:
   push:
@@ -60,6 +59,7 @@ jobs:
         run: |
           git clone --filter=blob:none https://github.com/Eraxty/Atlas.git upstream
           git -C upstream checkout --detach "${{ steps.upstream.outputs.sha }}"
+          git -C upstream apply ../docker/atlas-config.patch
           cp docker/Dockerfile upstream/Dockerfile.unraid
           cp docker/entrypoint.sh upstream/unraid-entrypoint.sh
       - name: Set up Docker Buildx
