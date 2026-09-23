@@ -30,7 +30,11 @@ jobs:
         id: upstream
         shell: bash
         run: |
-          sha="$(curl --fail --silent --show-error -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/commits/main" | jq -r '.sha')"
+          sha="$(curl --fail --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/commits/main" |
+            jq -r '.sha')"
           test -n "$sha"
           test "$sha" != "null"
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
