@@ -23,10 +23,6 @@ The startup wrapper creates /mnt/user/appdata/atlas/config.json on first run.
 It preserves the Atlas API key and synchronizes the Unraid NNTP settings into
 that file on later starts.
 
-NZB files created with the Atlas **Save NZB** action are stored persistently in:
-
-/mnt/user/appdata/atlas/nzb
-
 Add Atlas to Prowlarr as a Generic Newznab indexer:
 
 - URL: http://UNRAID-IP:9090
@@ -36,15 +32,14 @@ Add Atlas to Prowlarr as a Generic Newznab indexer:
 
 ## AI search with Ollama
 
-Atlas AI search is optional. It requires a separate Ollama server and currently
-hardcodes the model qwen3:4b. Pull that model in Ollama, then set OLLAMA_HOST in the Atlas
+Atlas AI search requires a separate Ollama server and currently hardcodes the
+model qwen3:4b. Pull that model in Ollama, then set OLLAMA_HOST in the Atlas
 template to the reachable Ollama API URL, for example:
 
 http://UNRAID-IP:11434
 
 Do not use localhost when Ollama runs in another container; localhost inside
-Atlas refers to the Atlas container itself. Leave OLLAMA_HOST empty if AI
-Search will not be used.
+Atlas refers to the Atlas container itself.
 
 ## SABnzbd
 
@@ -60,6 +55,7 @@ The packaging wrapper only handles container configuration:
 
 - creates and updates the persistent Atlas config file;
 - generates the Atlas API key once and preserves it;
+- preserves the API key when settings are changed from the Atlas menu;
 - binds the Newznab API to 0.0.0.0:9090; and
 - then starts the unmodified upstream application.
 
