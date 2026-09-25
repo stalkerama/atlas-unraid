@@ -4,17 +4,19 @@ Unraid packaging for [Eraxty/Atlas](https://github.com/Eraxty/Atlas), a
 self-hosted Usenet indexer with a Newznab-compatible API.
 
 This repository does **not** fork or modify the Atlas application source.
-GitHub Actions builds the exact upstream commit with a small Unraid startup
-wrapper and publishes it to ghcr.io/stalkerama/atlas-unraid:latest.
+GitHub Actions builds upstream tag `v5.1.1` with a small Unraid startup
+wrapper and publishes it to `ghcr.io/stalkerama/atlas-unraid:latest` and
+`ghcr.io/stalkerama/atlas-unraid:v5.1.1`.
 
-The scheduled workflow checks upstream every six hours. Each upstream commit is
-published once as both latest and an immutable upstream-commit tag.
+The scheduled workflow checks the pinned release every six hours. Builds also
+carry an upstream commit tag. Moving to a newer release requires updating
+`UPSTREAM_REF` in the workflow and checking the config patch against that tag.
 
 ## Unraid installation
 
 Use unraid/atlas.xml as the template. Configure appdata at
 /mnt/user/appdata/atlas, map the host port of your choice to container port
-9090, and enter your NNTP credentials.
+9090 (default host port: 9192), and enter your NNTP credentials.
 
 Atlas does not provide a browser dashboard. The Unraid WebUI link opens its
 Newznab capabilities endpoint as a health check.
@@ -23,9 +25,35 @@ The startup wrapper creates /mnt/user/appdata/atlas/config.json on first run.
 It preserves the Atlas API key and synchronizes the Unraid NNTP settings into
 that file on later starts.
 
+### Existing Unraid installations
+
+Unraid saves an installed container's settings in its own `my-Atlas` user
+template. Updating this repository's `Atlas` XML does not replace that saved
+template. Recreating from `my-Atlas` keeps the existing appdata mapping and
+loads settings from `config.json`. In Unraid's Docker page, open Atlas **Edit**,
+switch to **Advanced View**, and verify that Appdata maps
+`/mnt/user/appdata/atlas` to `/app/data` (read/write), and the port maps host
+`9192` to container `9090` (TCP). Keep the `/mnt/user/appdata/atlas` directory:
+removing it deletes the configuration, database, and API key.
+
+Check the running container's actual mounts and port on the Unraid terminal:
+
+```sh
+docker inspect Atlas --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}{{json .NetworkSettings.Ports}}'
+ls -la /mnt/user/appdata/atlas
+```
+
+The inspect output must include `/mnt/user/appdata/atlas -> /app/data` and
+`9090/tcp` mapped to host port `9192`. `config.json` must appear in that host
+directory after startup. If it appears only inside the container, the appdata
+mount is missing or points somewhere else. Atlas's **Change config** screen
+asks for values again instead of pre-filling saved values; this alone does not
+mean the file was erased. Check `config.json` on the host, and keep its password
+and API key private.
+
 Add Atlas to Prowlarr as a Generic Newznab indexer:
 
-- URL: http://UNRAID-IP:9090
+- URL: http://UNRAID-IP:9192
 - API path: /api
 - API key: the api_key value from config.json
 - Category: Other (7000)

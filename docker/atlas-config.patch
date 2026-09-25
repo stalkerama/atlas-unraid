@@ -1,8 +1,8 @@
 diff --git a/src/config.py b/src/config.py
-index 52967cc..cc3cfd1 100644
+index 6fd4942..1350cae 100644
 --- a/src/config.py
 +++ b/src/config.py
-@@ -87,6 +87,13 @@ def save_config(host, username, password, port, group, index_mode="dynamic", gr
+@@ -127,12 +127,15 @@ def save_config(host, username, password, port, group, index_mode="dynamic", gro
      if groups is None:
          groups = [group] if group else []
  
@@ -13,16 +13,22 @@ index 52967cc..cc3cfd1 100644
 +    except (OSError, ValueError, json.JSONDecodeError):
 +        pass
 +
+     if api_port is None:
+-        try:
+-            with open(config_file, "r") as f:
+-                api_port = json.load(f).get("api_port")
+-        except (OSError, ValueError, json.JSONDecodeError):
+-            pass
++        api_port = existing.get("api_port")
+ 
      config = {
          "host": host,
-         "username": username,
-@@ -95,6 +102,12 @@ def save_config(host, username, password, port, group, index_mode="dynamic", gr
-         "index_mode": index_mode
-     }
+@@ -146,6 +149,11 @@ def save_config(host, username, password, port, group, index_mode="dynamic", gro
+     if api_port:
+         config["api_port"] = api_port
  
-+    # Preserve container/API settings that the interactive settings screen
-+    # does not edit. In particular, dropping api_key breaks Newznab clients.
-+    for key in ("api_key", "api_host", "api_port"):
++    # The settings menu does not edit these container/API settings.
++    for key in ("api_key", "api_host"):
 +        if key in existing:
 +            config[key] = existing[key]
 +

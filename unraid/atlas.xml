@@ -9,13 +9,13 @@
   <Project>https://github.com/Eraxty/Atlas</Project>
   <Overview>Atlas is a self-hosted Usenet indexer with a Newznab-compatible API. This package builds the unmodified upstream Dockerfile.</Overview>
   <Category>Downloaders:</Category>
-  <WebUI/>
+  <WebUI>http://[IP]:[PORT:9090]/api?t=caps</WebUI>
   <Shell>bash</Shell>
   <ExtraParams>--interactive --tty</ExtraParams>
   <Requires>An NNTP/Usenet provider account. SABnzbd is optional but required for direct downloads.</Requires>
   <Config Name="Appdata" Target="/app/data" Default="/mnt/user/appdata/atlas" Mode="rw" Description="Atlas configuration, SQLite database, logs, cache, and generated data." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/atlas</Config>
   <Config Name="SABnzbd Config" Target="/root/.sabnzbd" Default="/mnt/user/appdata/sabnzbd" Mode="rw" Description="SABnzbd configuration directory. Atlas reads the SABnzbd API key from sabnzbd.ini and uses its watched folder." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/sabnzbd</Config>
-  <Config Name="Newznab API Port" Target="9090" Default="9090" Mode="tcp" Description="Atlas Newznab API port." Type="Port" Display="always" Required="true" Mask="false">9090</Config>
+  <Config Name="Newznab API Port" Target="9090" Default="9192" Mode="tcp" Description="Atlas Newznab API host port; container listens on 9090." Type="Port" Display="always" Required="true" Mask="false">9192</Config>
   <Config Name="NNTP Host" Target="ATLAS_NNTP_HOST" Default="" Mode="" Description="Your Usenet provider NNTP hostname." Type="Variable" Display="always" Required="true" Mask="false"></Config>
   <Config Name="NNTP Port" Target="ATLAS_NNTP_PORT" Default="563" Mode="" Description="NNTP SSL port." Type="Variable" Display="always" Required="true" Mask="false">563</Config>
   <Config Name="NNTP Username" Target="ATLAS_NNTP_USER" Default="" Mode="" Description="Your Usenet provider username." Type="Variable" Display="always" Required="true" Mask="false"></Config>
